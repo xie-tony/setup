@@ -42,7 +42,10 @@ installZsh () {
     sh -c "$(curl -fsSL \
         https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
         "" \
-        --keep-zshrc
+        --keep-zshrc\
+        --unattended
+
+    chsh -s $(which zsh)
 }
 
 declare -f
