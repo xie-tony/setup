@@ -69,7 +69,8 @@ $non_sudo "installDotfile"
 # Linuxbrew
 # Manunal install since I can't get around sudo password
 git clone https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew
-chown "$SUDO_USER:$($non_sudo id -gn)" /home/linuxbrew/.linuxbrew
+USER_GROUP=$($non_sudo "id -gn")
+chown "$SUDO_USER:$USER_GROUP" /home/linuxbrew/.linuxbrew
 
 $non_sudo "installBrew"
 
