@@ -1,10 +1,10 @@
 #!/bin/bash
 
-non_sudo="su $SUDO_USER -c"
+non_sudo="su -p -s "/bin/bash" $SUDO_USER -c"
 
 # Pull dotfile from repo
 installDotfile () {
-    local config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+    local config="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
     git clone --bare https://github.com/xie-tony/dotfiles.git $HOME/.cfg
 
     # Backup the defaults
@@ -18,9 +18,6 @@ installDotfile () {
 
 # Use linuxbrew to download some stuff that's not in apt-get
 installBrew () {
-    CI=1 /bin/bash -c \
-        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
     /home/linuxbrew/.linuxbrew/bin/brew install\
         fzf ripgrep
 }
@@ -60,12 +57,19 @@ apt-get install -y git
 # Install zsh
 apt-get install -y zsh
 $non_sudo "installZsh"
-chsh -s $SUDO_USER /usr/bin/zsh
+chsh $SUDO_USER -s $(which zsh)
 
 # Dotfile stuff
 $non_sudo "installDotfile"
 
 # Linuxbrew
+
+# Manual install since I couldn't get around no sudo
+git clone https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew
+mkdir /home/linuxbrew/.linuxbrew/bin
+ln -s /home/linuxbrew/.linuxbrew/Homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin
+eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
 $non_sudo "installBrew"
 
 # Ocaml stuff
@@ -73,5 +77,7 @@ apt-get install -y software-properties-common
 add-apt-repository -y ppa:avsm/ppa
 apt-get update
 apt-get install -y opam
+# Required for core
+apt-get install -y m4
 $non_sudo "installOcaml"
 
