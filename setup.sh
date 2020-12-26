@@ -4,7 +4,7 @@ non_sudo="su $SUDO_USER -c"
 
 # Pull dotfile from repo
 installDotfile () {
-    config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+    local config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
     git clone --bare https://github.com/xie-tony/dotfiles.git $HOME/.cfg
 
     # Backup the defaults
@@ -45,8 +45,6 @@ installZsh () {
         "" \
         --keep-zshrc\
         --unattended
-
-    chsh -s $(which zsh)
 }
 
 export -f installDotfile installBrew \
@@ -61,7 +59,8 @@ apt-get install -y git
 
 # Install zsh
 apt-get install -y zsh
-#$non_sudo "installZsh"
+$non_sudo "installZsh"
+chsh -s $SUDO_USER /usr/bin/zsh
 
 # Dotfile stuff
 $non_sudo "installDotfile"
