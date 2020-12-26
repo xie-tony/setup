@@ -18,6 +18,10 @@ installDotfile () {
 
 # Use linuxbrew to download some stuff that's not in apt-get
 installBrew () {
+    mkdir /home/linuxbrew/.linuxbrew/bin
+    ln -s /home/linuxbrew/.linuxbrew/Homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
     /home/linuxbrew/.linuxbrew/bin/brew install\
         fzf ripgrep
 }
@@ -63,12 +67,9 @@ chsh $SUDO_USER -s $(which zsh)
 $non_sudo "installDotfile"
 
 # Linuxbrew
-
-# Manual install since I couldn't get around no sudo
+# Manunal install since I can't get around sudo password
 git clone https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew
-mkdir /home/linuxbrew/.linuxbrew/bin
-ln -s /home/linuxbrew/.linuxbrew/Homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+chown "$SUDO_USER:$($non_sudo id -gn)" /home/linuxbrew/.linuxbrew
 
 $non_sudo "installBrew"
 
@@ -78,6 +79,6 @@ add-apt-repository -y ppa:avsm/ppa
 apt-get update
 apt-get install -y opam
 # Required for core
-apt-get install -y m4
+apt-get install -y m4 gcc make
 $non_sudo "installOcaml"
 
