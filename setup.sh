@@ -1,6 +1,6 @@
 #!/bin/bash
 
-non_sudo="sudo -u $SUDO_USER bash -c"
+non_sudo="su $SUDO_USER -c"
 
 # Pull dotfile from repo
 installDotfile () {
@@ -31,6 +31,7 @@ installOcaml () {
     eval $(opam env)
     opam switch create 4.10.0
     eval $(opam env)
+    opam update
 
     opam install -y \
         utop core async \
@@ -48,7 +49,8 @@ installZsh () {
     chsh -s $(which zsh)
 }
 
-declare -f
+export -f installDotfile installBrew \
+	  installOcaml installZsh
 
 # Update apt-get
 apt-get update
@@ -59,6 +61,7 @@ apt-get install -y git
 
 # Install zsh
 apt-get install -y zsh
+#$non_sudo "installZsh"
 
 # Dotfile stuff
 $non_sudo "installDotfile"
@@ -67,6 +70,9 @@ $non_sudo "installDotfile"
 $non_sudo "installBrew"
 
 # Ocaml stuff
+apt-get install -y software-properties-common
+add-apt-repository -y ppa:avsm/ppa
+apt-get update
 apt-get install -y opam
 $non_sudo "installOcaml"
 
